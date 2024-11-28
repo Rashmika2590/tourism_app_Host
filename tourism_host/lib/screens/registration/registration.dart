@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:tourism_host/Services/auth_service.dart';
+
 
 class HostRegistrationPage extends StatefulWidget {
   @override
@@ -9,6 +11,7 @@ class HostRegistrationPage extends StatefulWidget {
 class _HostRegistrationPageState extends State<HostRegistrationPage> {
   final _formKey = GlobalKey<FormState>();
   bool _isButtonEnabled = false;
+  bool _isLoading = false;
 
   // Controllers for input fields
   final TextEditingController _firstNameController = TextEditingController();
@@ -16,6 +19,8 @@ class _HostRegistrationPageState extends State<HostRegistrationPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+
+  final AuthService _authService = AuthService(); // Initialize AuthService
 
   void _validateInputs() {
     setState(() {
@@ -25,6 +30,37 @@ class _HostRegistrationPageState extends State<HostRegistrationPage> {
           _passwordController.text.length >= 6 &&
           _phoneController.text.length >= 10; // Minimum 10 digits
     });
+  }
+
+  Future<void> _registerUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Register user with Firebase Authentication
+      final user = await _authService.registerWithEmailAndPassword(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
+      );
+
+      if (user != null) {
+        // Save additional user details to Firestore (optional, can be added later)
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Registration Successful!')),
+        );
+        // Navigate to the next page (e.g., Property Type Selection)
+        Navigator.pushNamed(context, '/progress_page');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.toString()}')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -135,24 +171,25 @@ class _HostRegistrationPageState extends State<HostRegistrationPage> {
                       onPressed: _isButtonEnabled
                           ? () {
                               if (_formKey.currentState!.validate()) {
-                                // Navigate to the Property Type Selection Page
-                                Navigator.pushNamed(context, '/progress_page');
+                                _registerUser();
                               }
                             }
                           : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blueAccent,
                         padding: EdgeInsets.symmetric(vertical: 15),
-                        textStyle: TextStyle(fontSize: 16, color: Colors.white), // Text style
-                        minimumSize: Size(MediaQuery.of(context).size.width, 50), // Full-width button
+                        textStyle: TextStyle(fontSize: 16, color: Colors.white),
+                        minimumSize: Size(MediaQuery.of(context).size.width, 50),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15.0),
                         ),
                       ),
-                      child: Text(
-                        'Continue',
-                        style: TextStyle(color: Colors.white), // Text color explicitly set to white
-                      ),
+                      child: _isLoading
+                          ? CircularProgressIndicator(color: Colors.white)
+                          : Text(
+                              'Continue',
+                              style: TextStyle(color: Colors.white),
+                            ),
                     ),
                   ],
                 ),

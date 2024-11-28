@@ -1,22 +1,33 @@
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:tourism_host/firebase_options.dart';
+
+import 'package:tourism_host/screens/Add%20property/progress_page.dart';
 import 'package:tourism_host/screens/Add%20property/Place%20Shining/add_amenities.dart';
 import 'package:tourism_host/screens/Add%20property/Place%20Shining/add_photos.dart';
 import 'package:tourism_host/screens/Add%20property/Place%20Shining/name_description.dart';
 import 'package:tourism_host/screens/Add%20property/Place%20Shining/package_creating.dart';
+
 import 'package:tourism_host/screens/Add%20property/Property%20Describing/Place_type.dart';
 import 'package:tourism_host/screens/Add%20property/Property%20Describing/Property_type_selection.dart';
 import 'package:tourism_host/screens/Add%20property/Property%20Describing/property_location.dart';
 import 'package:tourism_host/screens/Add%20property/Property%20Describing/space_usage.dart';
+
 import 'package:tourism_host/screens/Add%20property/Property%20Veryfication/host_details.dart';
 import 'package:tourism_host/screens/Add%20property/Property%20Veryfication/poperty_verification.dart';
+
 import 'package:tourism_host/screens/Dashboard/dashboard.dart';
+
 import 'package:tourism_host/screens/Property%20Details/property_details.dart';
 import 'package:tourism_host/screens/Property%20Details/property_list.dart';
-import 'package:tourism_host/screens/registration/progress_page.dart';
+
+
 import 'package:tourism_host/screens/registration/registration.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(HostApp());
 }
 
