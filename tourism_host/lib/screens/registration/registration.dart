@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
-import 'package:tourism_host/Services/auth_service.dart';
-
+import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:tourism_host/Services/auth_service.dart'; // Add this import
 
 class HostRegistrationPage extends StatefulWidget {
   @override
@@ -22,44 +22,96 @@ class _HostRegistrationPageState extends State<HostRegistrationPage> {
 
   final AuthService _authService = AuthService(); // Initialize AuthService
 
+  // Error messages
+  String? _firstNameError;
+  String? _lastNameError;
+  String? _emailError;
+  String? _passwordError;
+  String? _phoneError;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Add listeners for real-time validation
+    _firstNameController.addListener(_validateInputs);
+    _lastNameController.addListener(_validateInputs);
+    _emailController.addListener(_validateInputs);
+    _passwordController.addListener(_validateInputs);
+    _phoneController.addListener(_validateInputs);
+  }
+
   void _validateInputs() {
     setState(() {
-      _isButtonEnabled = _firstNameController.text.isNotEmpty &&
-          _lastNameController.text.isNotEmpty &&
-          EmailValidator.validate(_emailController.text) &&
-          _passwordController.text.length >= 6 &&
-          _phoneController.text.length >= 10; // Minimum 10 digits
+      _firstNameError = _firstNameController.text.isEmpty ? 'First Name is required' : null;
+      _lastNameError = _lastNameController.text.isEmpty ? 'Last Name is required' : null;
+      _emailError = EmailValidator.validate(_emailController.text) ? null : 'Enter a valid email';
+      _passwordError = _validatePassword(_passwordController.text);
+      _phoneError = _phoneController.text.length >= 10 ? null : 'Phone number must be at least 10 digits';
+
+      _isButtonEnabled = _firstNameError == null &&
+          _lastNameError == null &&
+          _emailError == null &&
+          _passwordError == null &&
+          _phoneError == null;
     });
   }
 
+  String? _validatePassword(String password) {
+    if (password.isEmpty) return 'Password is required';
+    if (password.length < 6) return 'Password must be at least 6 characters';
+    if (!RegExp(r'^(?=.*[a-z])').hasMatch(password)) return 'Password must contain a lowercase letter';
+    if (!RegExp(r'^(?=.*[A-Z])').hasMatch(password)) return 'Password must contain an uppercase letter';
+    if (!RegExp(r'^(?=.*\d)').hasMatch(password)) return 'Password must contain a number';
+    return null;
+  }
+
   Future<void> _registerUser() async {
+    if (!_formKey.currentState!.validate()) return;
+
     setState(() {
       _isLoading = true;
     });
 
     try {
-      // Register user with Firebase Authentication
       final user = await _authService.registerWithEmailAndPassword(
         _emailController.text.trim(),
         _passwordController.text.trim(),
       );
 
       if (user != null) {
-        // Save additional user details to Firestore (optional, can be added later)
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Registration Successful!')),
-        );
-        // Navigate to the next page (e.g., Property Type Selection)
-        Navigator.pushNamed(context, '/progress_page');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Registration Successful!')));
+        Navigator.pushNamed(context, '/dashboard');
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.toString()}')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
     } finally {
       setState(() {
         _isLoading = false;
       });
+    }
+  }
+
+  Future<void> _googleSignIn() async {
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+
+    try {
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      if (googleUser == null) {
+        // User cancelled the sign-in process
+        return;
+      }
+
+
+      //final user = await _authService.signInWithGoogle();
+
+
+      // if (user != null) {
+      //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Google Sign-In Successful!')));
+      //   Navigator.pushNamed(context, '/progress_page');
+      // }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
     }
   }
 
@@ -77,38 +129,23 @@ class _HostRegistrationPageState extends State<HostRegistrationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(height: 100), // Top spacing
+              SizedBox(height: 100),
               RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
                   text: "Welcome to ",
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black),
                   children: [
                     TextSpan(
                       text: "Stay Haven",
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blueAccent,
-                      ),
+                      style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.blueAccent),
                     ),
-                    TextSpan(
-                      text: " Host",
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
+                    TextSpan(text: " Host", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black)),
                   ],
                 ),
               ),
@@ -116,80 +153,47 @@ class _HostRegistrationPageState extends State<HostRegistrationPage> {
               Text(
                 "We're excited to have you",
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[700],
-                ),
+                style: TextStyle(fontSize: 16, color: Colors.grey[700]),
               ),
-              SizedBox(height: 70), // Space before the form
+              SizedBox(height: 70),
               Form(
                 key: _formKey,
                 child: Column(
                   children: [
-                    _buildTextField(
-                      controller: _firstNameController,
-                      label: 'First Name',
-                      validator: (value) =>
-                          value == null || value.isEmpty ? 'First Name is required' : null,
-                    ),
+                    _buildTextField(controller: _firstNameController, label: 'First Name', errorText: _firstNameError),
                     SizedBox(height: 15),
-                    _buildTextField(
-                      controller: _lastNameController,
-                      label: 'Last Name',
-                      validator: (value) =>
-                          value == null || value.isEmpty ? 'Last Name is required' : null,
-                    ),
+                    _buildTextField(controller: _lastNameController, label: 'Last Name', errorText: _lastNameError),
                     SizedBox(height: 15),
-                    _buildTextField(
-                      controller: _emailController,
-                      label: 'Email',
-                      keyboardType: TextInputType.emailAddress,
-                      validator: (value) => EmailValidator.validate(value ?? '')
-                          ? null
-                          : 'Enter a valid email',
-                    ),
+                    _buildTextField(controller: _emailController, label: 'Email', keyboardType: TextInputType.emailAddress, errorText: _emailError),
                     SizedBox(height: 15),
-                    _buildTextField(
-                      controller: _passwordController,
-                      label: 'Password',
-                      obscureText: true,
-                      validator: (value) => value != null && value.length >= 6
-                          ? null
-                          : 'Password must be at least 6 characters',
-                    ),
+                    _buildTextField(controller: _passwordController, label: 'Password', obscureText: true, errorText: _passwordError),
                     SizedBox(height: 15),
-                    _buildTextField(
-                      controller: _phoneController,
-                      label: 'Phone Number',
-                      keyboardType: TextInputType.phone,
-                      validator: (value) => value != null && value.length >= 10
-                          ? null
-                          : 'Enter a valid phone number',
-                    ),
-                    SizedBox(height: 70),
+                    _buildTextField(controller: _phoneController, label: 'Phone Number', keyboardType: TextInputType.phone, errorText: _phoneError),
+                    SizedBox(height: 30),
                     ElevatedButton(
-                      onPressed: _isButtonEnabled
-                          ? () {
-                              if (_formKey.currentState!.validate()) {
-                                _registerUser();
-                              }
-                            }
-                          : null,
+                      onPressed: _isButtonEnabled && !_isLoading ? _registerUser : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blueAccent,
                         padding: EdgeInsets.symmetric(vertical: 15),
                         textStyle: TextStyle(fontSize: 16, color: Colors.white),
                         minimumSize: Size(MediaQuery.of(context).size.width, 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
                       ),
                       child: _isLoading
                           ? CircularProgressIndicator(color: Colors.white)
-                          : Text(
-                              'Continue',
-                              style: TextStyle(color: Colors.white),
-                            ),
+                          : Text('Continue', style: TextStyle(color: Colors.white)),
+                    ),
+                    SizedBox(height: 15),
+                    TextButton(
+                      onPressed: _googleSignIn, 
+                      child: Text('Sign In with Google'),
+                      ),
+                    SizedBox(height: 20),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/login_page');
+                      },
+                      child: Text('Already have an account? Login', style: TextStyle(color: Colors.blueAccent)),
                     ),
                   ],
                 ),
@@ -206,15 +210,14 @@ class _HostRegistrationPageState extends State<HostRegistrationPage> {
     required String label,
     TextInputType keyboardType = TextInputType.text,
     bool obscureText = false,
-    String? Function(String?)? validator,
+    String? errorText,
   }) {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
+        errorText: errorText,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15.0),
           borderSide: BorderSide(color: Colors.blueAccent, width: 2),
@@ -226,8 +229,6 @@ class _HostRegistrationPageState extends State<HostRegistrationPage> {
       ),
       keyboardType: keyboardType,
       obscureText: obscureText,
-      onChanged: (_) => _validateInputs(),
-      validator: validator,
     );
   }
 }

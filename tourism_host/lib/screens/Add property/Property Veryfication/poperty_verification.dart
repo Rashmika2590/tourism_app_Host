@@ -335,7 +335,7 @@ class _PropertyVerificationPageState extends State<PropertyVerificationPage> {
               actions: [
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop();  // Close the dialog
+                   Navigator.pushNamed(context, '/login');  // Close the dialog
                   },
                   child: Text("OK"),
                 ),
