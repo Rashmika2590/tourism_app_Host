@@ -101,7 +101,7 @@ class _SpaceDetailsPageState extends State<SpaceDetailsPage> {
                   child: ElevatedButton(
                     onPressed: () {
                       // Handle continue action
-                      Navigator.pushNamed(context, '/property_location');
+                      Navigator.pushNamed(context, '/select_gust_types');
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Details saved!')),
                       );

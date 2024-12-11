@@ -1,4 +1,35 @@
 class Property {
+  static const List<String> predefinedTypes = [
+    'Apartment',
+    'House',
+    'Villa',
+    'Cottage',
+    'Studio'
+  ];
+  
+  static const List<String> predefinedAmenities = [
+    'WiFi',
+    'Air Conditioning',
+    'Swimming Pool',
+    'Parking',
+    'Gym'
+  ];
+
+  static const List<String> predefinedGuestTypes = [
+    'Solo Travelers',
+    'Couples',
+    'Families',
+    'Groups'
+  ];
+
+  static const List<String> predefinedRules = [
+    'No Smoking',
+    'No Pets',
+    'No Parties',
+    'Check-in after 2 PM',
+    'Check-out before 11 AM'
+  ];
+
   final String id;
   final String ownerId;
   final String name;
@@ -12,7 +43,6 @@ class Property {
   final int noOfRooms;
   final int maxGuests;
   final String address;
-  //final GeoPoint location;
   final List<String> photos;
   final List<String> packages;
 
@@ -30,7 +60,6 @@ class Property {
     required this.noOfRooms,
     required this.maxGuests,
     required this.address,
-    //required this.location,
     required this.photos,
     required this.packages,
   });
@@ -49,7 +78,6 @@ class Property {
       'noOfRooms': noOfRooms,
       'maxGuests': maxGuests,
       'address': address,
-      //'location': location,
       'photos': photos,
       'packages': packages,
     };
@@ -70,7 +98,6 @@ class Property {
       noOfRooms: map['noOfRooms'],
       maxGuests: map['maxGuests'],
       address: map['address'],
-      //location: map['location'],
       photos: List<String>.from(map['photos']),
       packages: List<String>.from(map['packages']),
     );

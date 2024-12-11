@@ -94,7 +94,7 @@ class _DescribePlacePageState extends State<DescribePlacePage> {
                     child: ElevatedButton(
                       onPressed: _isButtonEnabled
                           ? () {
-                            Navigator.pushNamed(context, '/package_creation');
+                            Navigator.pushNamed(context, '/add_rules');
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text("Details submitted!")),
                               );

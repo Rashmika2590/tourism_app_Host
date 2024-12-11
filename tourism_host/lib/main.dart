@@ -2,6 +2,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:tourism_host/firebase_options.dart';
+import 'package:tourism_host/screens/Add%20property/Place%20Shining/add_rules.dart';
+import 'package:tourism_host/screens/Add%20property/Property%20Describing/select_gust_types.dart';
 
 import 'package:tourism_host/screens/Add%20property/progress_page.dart';
 import 'package:tourism_host/screens/Add%20property/Place%20Shining/add_amenities.dart';
@@ -58,12 +60,14 @@ class HostApp extends StatelessWidget {
         '/which_kind_of_place': (context) => PropertyGuestTypeSelectionPage (),
         '/space_usage': (context) => SpaceDetailsPage(),
         '/property_location': (context) => PropertyLocationPage(),
-         
+        '/select_gust_types': (context) => SelectGuestTypesPage(),
+        
         '/add_photos': (context) => UploadPhotosPage(),
         '/name_description': (context) => DescribePlacePage(),
          '/package_creation': (context) => SpecialPackagesPage(),
          '/add_amenities': (context) => SelectAmenitiesPage(),
-
+         '/add_rules': (context) => RulesSelectionPage(selectedRules:[],),
+         
         '/host_details': (context) => HostDetailsPage(),
         '/Property_verification': (context) => PropertyVerificationPage(),
 

@@ -17,7 +17,7 @@ class _PropertyLocationPageState extends State<PropertyLocationPage> {
   late GoogleMapController _mapController;
   LatLng _mapCenter = LatLng(0, 0); // Initial position
   Set<Marker> _markers = {}; // Set of markers to display
-  LatLng _staticPointer = LatLng(0, 0); // Static pointer on map
+// Static pointer on map
 
   bool get _isFormValid {
     return _noController.text.isNotEmpty &&
@@ -39,7 +39,6 @@ class _PropertyLocationPageState extends State<PropertyLocationPage> {
 
         setState(() {
           _mapCenter = latLng;
-          _staticPointer = latLng;
         });
 
         // Move the map camera to the new position
@@ -179,7 +178,6 @@ class _PropertyLocationPageState extends State<PropertyLocationPage> {
                                         onLocationSelected: (selectedLocation) {
                                           setState(() {
                                             _mapCenter = selectedLocation;
-                                            _staticPointer = selectedLocation;
                                           });
                                           _mapController.animateCamera(
                                             CameraUpdate.newLatLngZoom(
@@ -270,6 +268,7 @@ class FullScreenMapPage extends StatefulWidget {
 }
 
 class _FullScreenMapPageState extends State<FullScreenMapPage> {
+  // ignore: unused_field
   late GoogleMapController _mapController;
   late LatLng _selectedLocation;
   Set<Marker> _markers = {}; // Set of markers to display
@@ -310,27 +309,44 @@ class _FullScreenMapPageState extends State<FullScreenMapPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Select Your Location'),
+        toolbarHeight: 80, // Adjust the height of the AppBar to add more space
+        title: Text(
+          'Set Your Location',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
+        ),
         actions: [
-          IconButton(
-            icon: Icon(Icons.check),
-            onPressed: () {
-              // Show the SnackBar with the selected location's latitude and longitude
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Location confirmed: ${_selectedLocation.latitude}, ${_selectedLocation.longitude}',
-                  ),
-                  duration: Duration(seconds: 2),
+          Padding(
+            padding: const EdgeInsets.only(right: 20.0), // Add some spacing
+            child: SizedBox(
+              width: 40, // Set the width of the circle
+              height: 35, // Set the height of the circle
+              child: CircleAvatar(
+                backgroundColor: Colors.blueAccent,
+                child: IconButton(
+                  icon: Icon(Icons.check, color: Colors.white, size: 20), // Adjust icon size
+                  onPressed: () {
+                    // Show the SnackBar with the selected location's latitude and longitude
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Location confirmed: ${_selectedLocation.latitude}, ${_selectedLocation.longitude}',
+                        ),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+
+                    // Pass the selected location back to the PropertyLocationPage
+                    widget.onLocationSelected(_selectedLocation);
+
+                    // Close the full-screen map
+                    Navigator.of(context).pop();
+                  },
                 ),
-              );
-
-              // Pass the selected location back to the PropertyLocationPage
-              widget.onLocationSelected(_selectedLocation);
-
-              // Close the full-screen map
-              Navigator.of(context).pop();
-            },
+              ),
+            ),
           ),
         ],
       ),
