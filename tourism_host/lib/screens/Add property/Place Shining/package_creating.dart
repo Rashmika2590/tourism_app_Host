@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tourism_host/Reusables/widgets/bottom_nav_buttons.dart';
 
 class SpecialPackagesPage extends StatefulWidget {
   @override
@@ -34,32 +35,35 @@ class _SpecialPackagesPageState extends State<SpecialPackagesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      body: SafeArea(
-        child: Container(
+    return SafeArea(
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        body: Container(
           color: Colors.white,
           child: Column(
             children: [
               // Title and overview
               Container(
-                padding: EdgeInsets.all(20.0),
+                padding: EdgeInsets.symmetric(horizontal: 20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 20),
+                    SizedBox(height: 25),
                     Text(
                       "Make your place shine",
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                    Divider(),
+                    SizedBox(height: 15),
+                    Text(
+                      "Introduce special packages from your place",
+                      textAlign: TextAlign.start,
                       style: TextStyle(
-                        fontSize: 24, fontWeight: FontWeight.bold),
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blueAccent[700],
                       ),
-                      Divider(),
-                      SizedBox(height: 20),
-                      Text(
-                        "Inroduce special packages from your place",
-                        textAlign: TextAlign.start,
-                        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold,color: Colors.blueAccent[700]),
-                      ),
+                    ),
                   ],
                 ),
               ),
@@ -71,6 +75,7 @@ class _SpecialPackagesPageState extends State<SpecialPackagesPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        SizedBox(height: 10),
                         Text(
                           "Customize and create special packages for your guests here. "
                           "Fill in the details like package name, price, description, and special features.",
@@ -105,12 +110,20 @@ class _SpecialPackagesPageState extends State<SpecialPackagesPage> {
                               _isFormVisible = !_isFormVisible;
                             });
                           },
-                          icon: Icon(Icons.add,color: Colors.white,),
-                          label: Text("Create New Package",style: TextStyle(color: Colors.white),),
+                          icon: Icon(
+                            Icons.add,
+                            color: Colors.white,
+                          ),
+                          label: Text(
+                            "Create New Package",
+                            style: TextStyle(color: Colors.white),
+                          ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blueAccent,
                             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25),
+                            ),
                           ),
                         ),
                         SizedBox(height: 25),
@@ -123,33 +136,33 @@ class _SpecialPackagesPageState extends State<SpecialPackagesPage> {
                               _buildInputField(
                                 controller: _packageNameController,
                                 label: "Package Name",
-                                hint: "package name",
+                                hint: "Package name",
                               ),
                               SizedBox(height: 15),
                               _buildInputField(
                                 controller: _priceController,
                                 label: "Package Price",
-                                hint: "package price",
+                                hint: "Package price",
                                 keyboardType: TextInputType.number,
                               ),
                               SizedBox(height: 15),
                               _buildInputField(
                                 controller: _descriptionController,
                                 label: "Description",
-                                hint: "package description",
+                                hint: "Package description",
                                 maxLines: 4,
                               ),
                               SizedBox(height: 15),
                               _buildInputField(
                                 controller: _scheduleController,
                                 label: "Schedule",
-                                hint: "package schedule",
+                                hint: "Package schedule",
                               ),
                               SizedBox(height: 15),
                               _buildInputField(
                                 controller: _featuresController,
                                 label: "Special Features",
-                                hint: "special features",
+                                hint: "Special features",
                                 maxLines: 3,
                               ),
                               SizedBox(height: 25),
@@ -178,6 +191,32 @@ class _SpecialPackagesPageState extends State<SpecialPackagesPage> {
                                   ),
                                 ),
                               ),
+                              // Continue Button
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 10),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    // Handle continue action
+                                    Navigator.pushNamed(context, '/host_details');
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('Package process continues!')),
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blueAccent,
+                                    padding: EdgeInsets.symmetric(vertical: 15),
+                                    textStyle: TextStyle(fontSize: 16, color: Colors.white),
+                                    minimumSize: Size(double.infinity, 50),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'Continue',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -186,34 +225,40 @@ class _SpecialPackagesPageState extends State<SpecialPackagesPage> {
                   ),
                 ),
               ),
-              // Continue Button fixed at the bottom
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 20),
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Handle continue action
-                    Navigator.pushNamed(context, '/host_details');
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Package process continues!')),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
-                    padding: EdgeInsets.symmetric(vertical: 15),
-                    textStyle: TextStyle(fontSize: 16, color: Colors.white),
-                    minimumSize: Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
+              // Fixed Continue Button (only when form is not visible)
+              if (!_isFormVisible)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Handle continue action
+                      Navigator.pushNamed(context, '/host_details');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Package process continues!')),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      padding: EdgeInsets.symmetric(vertical: 15),
+                      textStyle: TextStyle(fontSize: 16, color: Colors.white),
+                      minimumSize: Size(double.infinity, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                    ),
+                    child: Text(
+                      'Continue',
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
-                  child: Text(
-                    'Continue',
-                    style: TextStyle(color: Colors.white),
-                  ),
                 ),
-              ),
             ],
           ),
+        ),
+       bottomNavigationBar: BottomNavigationButtons(
+          onNext: () {
+              Navigator.pushNamed(context, '/which_kind_of_place');
+          },
         ),
       ),
     );

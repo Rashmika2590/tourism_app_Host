@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tourism_host/Reusables/widgets/bottom_nav_buttons.dart';
 
 class SpaceDetailsPage extends StatefulWidget {
   @override
@@ -24,13 +25,14 @@ class _SpaceDetailsPageState extends State<SpaceDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      body: SafeArea(
-        child: Container(
+    return SafeArea(
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        body: Container(
           color: Colors.white,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -42,7 +44,8 @@ class _SpaceDetailsPageState extends State<SpaceDetailsPage> {
                     Text(
                       "Tell us about your place",
                       textAlign: TextAlign.start,
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                     Divider(),
                   ],
@@ -51,7 +54,10 @@ class _SpaceDetailsPageState extends State<SpaceDetailsPage> {
                 Text(
                   "How many of your space can guests use?",
                   textAlign: TextAlign.start,
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.blueAccent[700]),
+                  style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueAccent[700]),
                 ),
                 SizedBox(height: 25),
                 Expanded(
@@ -96,35 +102,35 @@ class _SpaceDetailsPageState extends State<SpaceDetailsPage> {
                   ),
                 ),
                 // Continue button
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Handle continue action
-                      Navigator.pushNamed(context, '/select_gust_types');
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Details saved!')),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
-                      padding: EdgeInsets.symmetric(vertical: 15),
-                      textStyle: TextStyle(fontSize: 16, color: Colors.white),
-                      minimumSize: Size(MediaQuery.of(context).size.width, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
+                ElevatedButton(
+                  onPressed: () {
+                    // Handle continue action
+                    Navigator.pushNamed(context, '/select_gust_types');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Details saved!')),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    padding: EdgeInsets.symmetric(vertical: 15),
+                    textStyle: TextStyle(fontSize: 16, color: Colors.white),
+                    minimumSize: Size(MediaQuery.of(context).size.width, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
                     ),
-                    child: Text(
-                      'Continue',
-                      style: TextStyle(color: Colors.white),
-                    ),
+                  ),
+                  child: Text(
+                    'Continue',
+                    style: TextStyle(color: Colors.white),
                   ),
                 ),
               ],
             ),
           ),
         ),
+        bottomNavigationBar: BottomNavigationButtons(onNext: () {
+          Navigator.pushNamed(context, '/which_kind_of_place');
+        }),
       ),
     );
   }
@@ -152,7 +158,9 @@ class _SpaceDetailsPageState extends State<SpaceDetailsPage> {
               SizedBox(width: 10),
               Text(
                 label,
-                style: TextStyle(fontSize: 15,),
+                style: TextStyle(
+                  fontSize: 15,
+                ),
               ),
             ],
           ),

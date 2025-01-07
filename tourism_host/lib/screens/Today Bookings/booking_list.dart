@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tourism_host/Reusables/widgets/bottom_nav_buttons.dart';
 import 'package:tourism_host/screens/Today%20Bookings/booking_detail.dart';
 
 class TodaysBookingPage extends StatefulWidget {
@@ -138,180 +139,193 @@ class _TodaysBookingPageState extends State<TodaysBookingPage>
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
-    return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Title
-          Padding(
-            padding: EdgeInsets.only(top: screenHeight * 0.065,left: screenWidth*0.05),
-            child: Text(
-              'Today\'s Bookings',
-              style: TextStyle(
-                fontSize: screenHeight * 0.03,
-                fontWeight: FontWeight.bold,
+    return SafeArea(
+      child: Scaffold(
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Title
+            Padding(
+              padding: EdgeInsets.only(top: screenHeight * 0.045,left: screenWidth*0.05),
+              child: Text(
+                'Today\'s Bookings',
+                style: TextStyle(
+                  fontSize: screenHeight * 0.03,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-
-          // Tabs
-          Container(
-            padding: EdgeInsets.only(
-              top: screenHeight * 0.02,
-              bottom: screenHeight * 0.02,
+      
+            // Tabs
+            Container(
+              padding: EdgeInsets.only(
+                top: screenHeight * 0.02,
+                bottom: screenHeight * 0.02,
+              ),
+              child: TabBar(
+                controller: _tabController,
+                indicatorColor: Colors.blueAccent,
+                labelColor: Colors.blueAccent,
+                unselectedLabelColor: Colors.grey,
+                tabs: const [
+                  Tab(text: 'Short Stay'),
+                  Tab(text: 'Long Stay'),
+                ],
+              ),
             ),
-            child: TabBar(
-              controller: _tabController,
-              indicatorColor: Colors.blueAccent,
-              labelColor: Colors.blueAccent,
-              unselectedLabelColor: Colors.grey,
-              tabs: const [
-                Tab(text: 'Short Stay'),
-                Tab(text: 'Long Stay'),
-              ],
+      
+            // Tab Views
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  // Short Stay Tab
+                  Column(
+                    children: [
+                      // Buttons
+                      // Inside the respective `Row` widget for buttons
+                      SizedBox(height: screenHeight*0.025,),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start, // Change here to align to left
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  showOngoing = true;
+                                });
+                              },
+                              style: TextButton.styleFrom(
+                                backgroundColor: showOngoing ? Colors.blueAccent : Colors.grey[200],
+                                foregroundColor: showOngoing ? Colors.white : Colors.black,
+                                padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25.0),
+                                ),
+                              ),
+                              child: const Text('Ongoing Bookings'),
+                            ),
+                            SizedBox(width: screenWidth*0.05,),
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  showOngoing = false;
+                                });
+                              },
+                              style: TextButton.styleFrom(
+                                backgroundColor: !showOngoing ? Colors.blueAccent : Colors.grey[200],
+                                foregroundColor: !showOngoing ? Colors.white : Colors.black,
+                                padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25.0),
+                                ),
+                              ),
+                              child: const Text('New Bookings'),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // List of Bookings
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: showOngoing
+                              ? shortStayOngoingBookings.length
+                              : shortStayNewBookings.length,
+                          itemBuilder: (context, index) {
+                            return bookingCard(
+                              showOngoing
+                                  ? shortStayOngoingBookings[index]
+                                  : shortStayNewBookings[index],
+                              showOngoing,
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+      
+                  // Long Stay Tab
+                  Column(
+                    children: [
+                      // Buttons
+                      // Inside the respective `Row` widget for buttons
+                      SizedBox(height: screenHeight*0.025,),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end, // Change here to align to left
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  showOngoing = true;
+                                });
+                              },
+                              style: TextButton.styleFrom(
+                                backgroundColor: showOngoing ? Colors.blueAccent : Colors.grey[200],
+                                foregroundColor: showOngoing ? Colors.white : Colors.black,
+                                padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25.0),
+                                ),
+                              ),
+                              child: const Text('Ongoing Bookings'),
+                            ),
+                            SizedBox(width: screenWidth*0.05,),
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  showOngoing = false;
+                                });
+                              },
+                              style: TextButton.styleFrom(
+                                backgroundColor: !showOngoing ? Colors.blueAccent : Colors.grey[200],
+                                foregroundColor: !showOngoing ? Colors.white : Colors.black,
+                                padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25.0),
+                                ),
+                              ),
+                              child: const Text('New Bookings'),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // List of Bookings
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: showOngoing
+                              ? longStayOngoingBookings.length
+                              : longStayNewBookings.length,
+                          itemBuilder: (context, index) {
+                            return bookingCard(
+                              showOngoing
+                                  ? longStayOngoingBookings[index]
+                                  : longStayNewBookings[index],
+                              showOngoing,
+                            );
+                          },
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed:(){
+                          Navigator.pushNamed(context, '/report');
+                        }, 
+                        child: Text('Report')
+                      )
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-
-          // Tab Views
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                // Short Stay Tab
-                Column(
-                  children: [
-                    // Buttons
-                    // Inside the respective `Row` widget for buttons
-                    SizedBox(height: screenHeight*0.025,),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start, // Change here to align to left
-                        children: [
-                          TextButton(
-                            onPressed: () {
-                              setState(() {
-                                showOngoing = true;
-                              });
-                            },
-                            style: TextButton.styleFrom(
-                              backgroundColor: showOngoing ? Colors.blueAccent : Colors.grey[200],
-                              foregroundColor: showOngoing ? Colors.white : Colors.black,
-                              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25.0),
-                              ),
-                            ),
-                            child: const Text('Ongoing Bookings'),
-                          ),
-                          SizedBox(width: screenWidth*0.05,),
-                          TextButton(
-                            onPressed: () {
-                              setState(() {
-                                showOngoing = false;
-                              });
-                            },
-                            style: TextButton.styleFrom(
-                              backgroundColor: !showOngoing ? Colors.blueAccent : Colors.grey[200],
-                              foregroundColor: !showOngoing ? Colors.white : Colors.black,
-                              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25.0),
-                              ),
-                            ),
-                            child: const Text('New Bookings'),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // List of Bookings
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: showOngoing
-                            ? shortStayOngoingBookings.length
-                            : shortStayNewBookings.length,
-                        itemBuilder: (context, index) {
-                          return bookingCard(
-                            showOngoing
-                                ? shortStayOngoingBookings[index]
-                                : shortStayNewBookings[index],
-                            showOngoing,
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-
-                // Long Stay Tab
-                Column(
-                  children: [
-                    // Buttons
-                    // Inside the respective `Row` widget for buttons
-                    SizedBox(height: screenHeight*0.025,),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end, // Change here to align to left
-                        children: [
-                          TextButton(
-                            onPressed: () {
-                              setState(() {
-                                showOngoing = true;
-                              });
-                            },
-                            style: TextButton.styleFrom(
-                              backgroundColor: showOngoing ? Colors.blueAccent : Colors.grey[200],
-                              foregroundColor: showOngoing ? Colors.white : Colors.black,
-                              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25.0),
-                              ),
-                            ),
-                            child: const Text('Ongoing Bookings'),
-                          ),
-                          SizedBox(width: screenWidth*0.05,),
-                          TextButton(
-                            onPressed: () {
-                              setState(() {
-                                showOngoing = false;
-                              });
-                            },
-                            style: TextButton.styleFrom(
-                              backgroundColor: !showOngoing ? Colors.blueAccent : Colors.grey[200],
-                              foregroundColor: !showOngoing ? Colors.white : Colors.black,
-                              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25.0),
-                              ),
-                            ),
-                            child: const Text('New Bookings'),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // List of Bookings
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: showOngoing
-                            ? longStayOngoingBookings.length
-                            : longStayNewBookings.length,
-                        itemBuilder: (context, index) {
-                          return bookingCard(
-                            showOngoing
-                                ? longStayOngoingBookings[index]
-                                : longStayNewBookings[index],
-                            showOngoing,
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationButtons(
+          onNext: () {
+              Navigator.pushNamed(context, '/which_kind_of_place');
+          },
+        ),
       ),
     );
   }

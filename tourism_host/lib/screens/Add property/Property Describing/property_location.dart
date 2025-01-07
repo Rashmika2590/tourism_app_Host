@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:tourism_host/Reusables/widgets/bottom_nav_buttons.dart';
 
 class PropertyLocationPage extends StatefulWidget {
   @override
@@ -58,16 +59,16 @@ class _PropertyLocationPageState extends State<PropertyLocationPage> {
   
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      body: SafeArea(
-        child: Container(
+    return SafeArea(
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        body: Container(
           color: Colors.white,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 20),
+              SizedBox(height: 30),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: Column(
@@ -204,14 +205,8 @@ class _PropertyLocationPageState extends State<PropertyLocationPage> {
                         //   onPressed: _confirmLocation,
                         //   child: Text('Confirm Location'),
                         // ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              // Continue Button
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                        Padding(
+                padding: const EdgeInsets.symmetric( vertical: 10.0),
                 child: ElevatedButton(
                   onPressed: _isFormValid
                       ? () {
@@ -226,25 +221,59 @@ class _PropertyLocationPageState extends State<PropertyLocationPage> {
                           );
                         }
                       : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
-                    padding: EdgeInsets.symmetric(vertical: 15),
-                    textStyle: TextStyle(fontSize: 16, color: Colors.white),
-                    minimumSize: Size(MediaQuery.of(context).size.width, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blueAccent,
+                            padding: EdgeInsets.symmetric(vertical: 15),
+                            textStyle: TextStyle(fontSize: 16, color: Colors.white),
+                            minimumSize: Size(MediaQuery.of(context).size.width, 50),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                          ),
+                          child: Text(
+                            'Continue',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                      ],
                     ),
-                  ),
-                  child: Text(
-                    'Continue',
-                    style: TextStyle(color: Colors.white),
                   ),
                 ),
               ),
             ],
           ),
         ),
+        bottomNavigationBar: BottomNavigationButtons(
+          onNext: () {
+            if (_isFormValid) {
+              Navigator.pushNamed(context, '/which_kind_of_place');
+            } else {
+              _showAlertDialog(context);
+            }
+          },
+        ),
       ),
+    );
+  }
+
+   void _showAlertDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Warning'),
+          content: Text('Please select at least one guest type before proceeding.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 

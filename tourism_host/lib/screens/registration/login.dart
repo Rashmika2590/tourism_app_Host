@@ -1,5 +1,4 @@
-// lib/views/host/login_page.dart
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:tourism_host/services/auth_service.dart';
@@ -14,21 +13,16 @@ class _LoginPageState extends State<LoginPage> {
   bool _isButtonEnabled = false;
   bool _isLoading = false;
 
-  // Controllers for input fields
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
 
-  final AuthService _authService = AuthService(); // Initialize AuthService
-
-  // Error messages
   String? _emailError;
   String? _passwordError;
 
   @override
   void initState() {
     super.initState();
-
-    // Add listeners for real-time validation
     _emailController.addListener(_validateInputs);
     _passwordController.addListener(_validateInputs);
   }
@@ -39,48 +33,51 @@ class _LoginPageState extends State<LoginPage> {
           ? null
           : 'Enter a valid email';
 
-      _passwordError = _passwordController.text.isNotEmpty
-          ? null
-          : 'Password is required';
+      _passwordError =
+          _passwordController.text.isNotEmpty ? null : 'Password is required';
 
       _isButtonEnabled = _emailError == null && _passwordError == null;
     });
   }
 
   Future<void> _loginUser() async {
-    if (!_formKey.currentState!.validate()) {
-      // If form is not valid, do not proceed
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      // Login user with Firebase Authentication
-      final user = await _authService.loginWithEmailAndPassword(
-        _emailController.text.trim(),
-        _passwordController.text.trim(),
-      );
-
-      if (user != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login Successful!')),
-        );
-        // Navigate to the dashboard or home page
-        Navigator.pushNamed(context, '/dashboard');
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.toString()}')),
-      );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+  if (!_formKey.currentState!.validate()) {
+    // If form is not valid, do not proceed
+    return;
   }
+
+  setState(() {
+    _isLoading = true;
+  });
+
+  try {
+    // Login user with Firebase Authentication
+    final User? user = await _authService.loginWithEmailAndPassword(
+      _emailController.text.trim(),
+      _passwordController.text.trim(),
+    );
+
+    if (user != null) {
+      // Retrieve the ID token from the User object
+      String? idToken = await user.getIdToken();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Login Successful! ID Token: $idToken')),
+      );
+      // Navigate to the dashboard or home page
+      Navigator.pushNamed(context, '/dashboard');
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error: ${e.toString()}')),
+    );
+  } finally {
+    setState(() {
+      _isLoading = false;
+    });
+  }
+}
+
 
   @override
   void dispose() {
@@ -98,8 +95,7 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Optional: Add a logo or image here
-              SizedBox(height: 80), // Top spacing
+              SizedBox(height: 80),
               Text(
                 "Login to Stay Haven Host",
                 textAlign: TextAlign.center,
@@ -118,7 +114,7 @@ class _LoginPageState extends State<LoginPage> {
                   color: Colors.grey[700],
                 ),
               ),
-              SizedBox(height: 80), // Space before the form
+              SizedBox(height: 80),
               Form(
                 key: _formKey,
                 child: Column(
@@ -128,9 +124,6 @@ class _LoginPageState extends State<LoginPage> {
                       label: 'Email',
                       keyboardType: TextInputType.emailAddress,
                       errorText: _emailError,
-                      validator: (value) => EmailValidator.validate(value ?? '')
-                          ? null
-                          : 'Enter a valid email',
                     ),
                     SizedBox(height: 15),
                     _buildTextField(
@@ -138,8 +131,6 @@ class _LoginPageState extends State<LoginPage> {
                       label: 'Password',
                       obscureText: true,
                       errorText: _passwordError,
-                      validator: (value) =>
-                          value != null && value.isNotEmpty ? null : 'Password is required',
                     ),
                     SizedBox(height: 50),
                     ElevatedButton(
@@ -151,9 +142,8 @@ class _LoginPageState extends State<LoginPage> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blueAccent,
                         padding: EdgeInsets.symmetric(vertical: 15),
-                        textStyle:
-                            TextStyle(fontSize: 16, color: Colors.white), // Text style
-                        minimumSize: Size(MediaQuery.of(context).size.width, 50), // Full-width button
+                        minimumSize:
+                            Size(MediaQuery.of(context).size.width, 50),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15.0),
                         ),
@@ -162,7 +152,7 @@ class _LoginPageState extends State<LoginPage> {
                           ? CircularProgressIndicator(color: Colors.white)
                           : Text(
                               'Login',
-                              style: TextStyle(color: Colors.white), // Text color explicitly set to white
+                              style: TextStyle(color: Colors.white),
                             ),
                     ),
                     SizedBox(height: 20),
@@ -191,7 +181,6 @@ class _LoginPageState extends State<LoginPage> {
     TextInputType keyboardType = TextInputType.text,
     bool obscureText = false,
     String? errorText,
-    String? Function(String?)? validator,
   }) {
     return TextFormField(
       controller: controller,
@@ -201,18 +190,9 @@ class _LoginPageState extends State<LoginPage> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15.0),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15.0),
-          borderSide: BorderSide(color: Colors.blueAccent, width: 2),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15.0),
-          borderSide: BorderSide(color: const Color.fromARGB(255, 207, 206, 206)),
-        ),
       ),
       keyboardType: keyboardType,
       obscureText: obscureText,
-      validator: validator,
     );
   }
 }

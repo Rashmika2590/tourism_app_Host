@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tourism_host/Reusables/widgets/bottom_nav_buttons.dart';
 
 class DescribePlacePage extends StatefulWidget {
   @override
@@ -34,10 +35,10 @@ class _DescribePlacePageState extends State<DescribePlacePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      body: SafeArea(
-        child: LayoutBuilder(
+    return SafeArea(
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        body: LayoutBuilder(
           builder: (context, constraints) {
             return Container(
               color: Colors.white,
@@ -121,7 +122,36 @@ class _DescribePlacePageState extends State<DescribePlacePage> {
             );
           },
         ),
+        bottomNavigationBar: BottomNavigationButtons(
+          onNext: () {
+            if ( _isButtonEnabled) {
+              Navigator.pushNamed(context, '/which_kind_of_place');
+            } else {
+              _showAlertDialog(context);
+            }
+          },
+        ),
       ),
+    );
+  }
+
+  void _showAlertDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Warning'),
+          content: Text('Please select at least one guest type before proceeding.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 

@@ -22,9 +22,11 @@ import 'package:tourism_host/screens/Add%20property/Property%20Veryfication/pope
 import 'package:tourism_host/screens/Dashboard/dashboard.dart';
 import 'package:tourism_host/screens/Dashboard/notifiactions.dart';
 import 'package:tourism_host/screens/Dashboard/profile.dart';
+import 'package:tourism_host/screens/Dashboard/property_creation_test.dart';
 
 import 'package:tourism_host/screens/Property%20Details/property_details.dart';
 import 'package:tourism_host/screens/Property%20Details/property_list.dart';
+import 'package:tourism_host/screens/Report/report.dart';
 //import 'package:tourism_host/screens/Today%20Bookings/booking_detail.dart';
 import 'package:tourism_host/screens/Today%20Bookings/booking_list.dart';
 import 'package:tourism_host/screens/registration/login.dart';
@@ -47,7 +49,7 @@ class HostApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/registration',
+      initialRoute: '/login_page',
       routes: {
         '/dashboard': (context) => DashboardPage(),
         
@@ -81,8 +83,13 @@ class HostApp extends StatelessWidget {
       '/today_booking': (context) => TodaysBookingPage(),
       //'/booking_detail': (context) => BookingDetailsPage(),
 
+      '/report': (context) => BookingReportPage(),
+      
+
       '/notifications': (context) => HostNotificationPage(),
       '/profile': (context) => ProfilePage (),
+
+      '/Property_creation_test': (context) => PropertyCreationPage (),
         
       },
     );

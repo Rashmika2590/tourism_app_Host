@@ -47,6 +47,9 @@ dependencies:
   google_sign_in: ^6.2.2
   google_maps_flutter: ^2.2.0
   geocoding: ^3.0.0
+  fl_chart: ^0.69.2
+  flutter_secure_storage: ^8.0.0
+  
 
 
 dev_dependencies:

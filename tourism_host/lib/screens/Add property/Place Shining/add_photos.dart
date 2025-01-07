@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tourism_host/Reusables/widgets/bottom_nav_buttons.dart';
 
 class UploadPhotosPage extends StatefulWidget {
   @override
@@ -33,10 +34,10 @@ class _UploadPhotosPageState extends State<UploadPhotosPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      body: SafeArea(
-        child: Container(
+    return SafeArea(
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        body: Container(
           color: Colors.white,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,7 +66,7 @@ class _UploadPhotosPageState extends State<UploadPhotosPage> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         // Instruction text
-                        SizedBox(height: 10),
+                        SizedBox(height: 15),
                         Text(
                         "Add images and Showcase Your Space",
                           textAlign: TextAlign.start,
@@ -167,7 +168,7 @@ class _UploadPhotosPageState extends State<UploadPhotosPage> {
               ),
               // Complete button at the bottom
               Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 10),
                 child: ElevatedButton(
                   onPressed: _canComplete
                       ? () {
@@ -196,7 +197,36 @@ class _UploadPhotosPageState extends State<UploadPhotosPage> {
             ],
           ),
         ),
+        bottomNavigationBar: BottomNavigationButtons(
+          onNext: () {
+            if (_canComplete) {
+              Navigator.pushNamed(context, '/which_kind_of_place');
+            } else {
+              _showAlertDialog(context);
+            }
+          },
+        ),
       ),
+    );
+  }
+
+  void _showAlertDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Warning'),
+          content: Text('Please select at least one guest type before proceeding.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 

@@ -142,6 +142,13 @@ class DashboardPage extends StatelessWidget {
                   ],
                 ),
               ),
+
+              ElevatedButton(
+                onPressed: (){
+                  Navigator.pushNamed(context, '/Property_creation_test');
+                }, 
+                child: Text('property creation test')
+                ),
               // Notifications button
               ElevatedButton.icon(
                 onPressed: () {

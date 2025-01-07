@@ -81,7 +81,7 @@ class _HostRegistrationPageState extends State<HostRegistrationPage> {
 
       if (user != null) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Registration Successful!')));
-        Navigator.pushNamed(context, '/dashboard');
+        Navigator.pushNamed(context, '/login_page');
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));

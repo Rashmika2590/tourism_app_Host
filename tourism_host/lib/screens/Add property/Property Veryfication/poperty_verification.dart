@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
+import 'package:tourism_host/Reusables/widgets/bottom_nav_buttons.dart';
 
 class PropertyVerificationPage extends StatefulWidget {
   @override
@@ -47,16 +48,17 @@ class _PropertyVerificationPageState extends State<PropertyVerificationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: Colors.white,
-        child: SafeArea(
+    return SafeArea(
+      child: Scaffold(
+        body: Container(
+          color: Colors.white,
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Step Heading
+                SizedBox(height: 20),
                 Text(
                   "Verification",
                   textAlign: TextAlign.start,
@@ -267,96 +269,120 @@ class _PropertyVerificationPageState extends State<PropertyVerificationPage> {
                     ),
                   ),
                 ],
-          
-                SizedBox(height: 30),
-              ],
-            ),
-          ),
-        ),
-      ),
-      bottomNavigationBar: Container(
-        color: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: ElevatedButton(
-            onPressed: isNextEnabled
-    ? () {
-        // Show the green snackbar with success message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                Icon(
-                  Icons.check_circle,  // You can keep the static icon here if you want
-                  color: Colors.white,
-                  size: 30,
-                ),
-                SizedBox(width: 10),
-                Text(
-                  "Your property is added!",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ],
-            ),
-            backgroundColor: Colors.green, // Green background for success
-            duration: Duration(seconds: 2),
-          ),
-        );
-
-        // Show the alert dialog with the animated icon
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              contentPadding: EdgeInsets.all(0), // Remove default padding
-              content: Container(
-                height: 220,  // Set fixed height for the AlertDialog
-                width: double.maxFinite,  // Make it take full width
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,  // Center the content vertically
-                  mainAxisSize: MainAxisSize.min,  // Let the column take only the needed space
-                  children: [
-                    Lottie.asset(
-                      'assets/animations/Animation - 1732271712282.json',  // Make sure to add this animation file in assets
-                      width: 200,  // Larger size for the icon
-                      height: 200,  // Larger size for the icon
-                      fit: BoxFit.cover,
-                    ), // Space between icon and text
-                    Text(
-                      "Your property is added!",
-                      style: TextStyle(
-                        fontSize: 14,  // Adjust the text size for better alignment with the icon
-                        color: Colors.black,
+                Spacer(),
+                SizedBox(
+                  width:double.infinity,
+                  child: ElevatedButton(
+                    onPressed: isNextEnabled
+                        ? () {
+                            // Show the green snackbar with success message
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.check_circle,  // You can keep the static icon here if you want
+                                      color: Colors.white,
+                                      size: 30,
+                                    ),
+                                    SizedBox(width: 10),
+                                    Text(
+                                      "Your property is added!",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ],
+                                ),
+                                backgroundColor: Colors.green, // Green background for success
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                        
+                            // Show the alert dialog with the animated icon
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  contentPadding: EdgeInsets.all(0), // Remove default padding
+                                  content: Container(
+                                    height: 220,  // Set fixed height for the AlertDialog
+                                    width: double.maxFinite,  // Make it take full width
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,  // Center the content vertically
+                                      mainAxisSize: MainAxisSize.min,  // Let the column take only the needed space
+                                      children: [
+                                        Lottie.asset(
+                                          'assets/animations/Animation - 1732271712282.json',  // Make sure to add this animation file in assets
+                                          width: 200,  // Larger size for the icon
+                                          height: 200,  // Larger size for the icon
+                                          fit: BoxFit.cover,
+                                        ), // Space between icon and text
+                                        Text(
+                                          "Your property is added!",
+                                          style: TextStyle(
+                                            fontSize: 14,  // Adjust the text size for better alignment with the icon
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                      Navigator.pushNamed(context, '/login');  // Close the dialog
+                                      },
+                                      child: Text("OK"),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          }
+                        : null,
+                        
+                    child: Text('FINISH',style: TextStyle(color: Colors.white),),
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(vertical: 15),
+                      backgroundColor: isNextEnabled ? Colors.blueAccent : Colors.grey,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                  ],
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                   Navigator.pushNamed(context, '/login');  // Close the dialog
-                  },
-                  child: Text("OK"),
+                  ),
                 ),
               ],
-            );
-          },
-        );
-      }
-    : null,
-
-            child: Text('FINISH',style: TextStyle(color: Colors.white),),
-            style: ElevatedButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 15),
-              backgroundColor: isNextEnabled ? Colors.blueAccent : Colors.grey,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
             ),
           ),
         ),
+       bottomNavigationBar: BottomNavigationButtons(
+          onNext: () {
+            if ( isNextEnabled) {
+              Navigator.pushNamed(context, '/which_kind_of_place');
+            } else {
+              _showAlertDialog(context);
+            }
+          },
+        ),
       ),
+    );
+  }
+  void _showAlertDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Warning'),
+          content: Text('Please select at least one guest type before proceeding.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

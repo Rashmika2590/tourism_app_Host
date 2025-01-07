@@ -43,123 +43,121 @@ class _SelectGuestTypesPageState extends State<SelectGuestTypesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Heading and Divider
-              SizedBox(height: 35),
-              const Text(
-                "Select the Guest Types",
-                textAlign: TextAlign.start,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              Divider(),
-              SizedBox(height: 20),
-              Text(
-                "Choose the types of guests who will stay at your property",
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.blueAccent[700],
-                    fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 15),
-
-              // Guest type selection grid
-              Expanded(
-                child: GridView.builder(
-                  itemCount: _guestTypes.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3, // Show 3 guest types per row
-                    crossAxisSpacing: 15, // Horizontal space between cards
-                    mainAxisSpacing: 15, // Vertical space between cards
-                  ),
-                  itemBuilder: (context, index) {
-                    String guestType = _guestTypes[index];
-                    bool isSelected = _selectedGuestTypes.contains(guestType);
-
-                    return GestureDetector(
-                      onTap: () => _toggleSelection(guestType),
-                      child: Card(
-                        color:
-                            isSelected ? Colors.lightBlue[100] : Colors.white,
-                        elevation: 5,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons
-                                  .people, // You can replace this with different icons based on guest type
-                              size: 30,
-                              color: isSelected ? Colors.black : Colors.grey,
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              guestType,
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
+    return SafeArea(
+      child: Scaffold(
+        body: Container(
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Heading and Divider
+                SizedBox(height: 30),
+                const Text(
+                  "Select the Guest Types",
+                  textAlign: TextAlign.start,
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                Divider(),
+                SizedBox(height: 25),
+                Text(
+                  "Choose the types of guests who will stay at your property",
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.blueAccent[700],
+                      fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 15),
+      
+                // Guest type selection grid
+                Expanded(
+                  child: GridView.builder(
+                    itemCount: _guestTypes.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3, // Show 3 guest types per row
+                      crossAxisSpacing: 15, // Horizontal space between cards
+                      mainAxisSpacing: 15, // Vertical space between cards
+                    ),
+                    itemBuilder: (context, index) {
+                      String guestType = _guestTypes[index];
+                      bool isSelected = _selectedGuestTypes.contains(guestType);
+      
+                      return GestureDetector(
+                        onTap: () => _toggleSelection(guestType),
+                        child: Card(
+                          color:
+                              isSelected ? Colors.lightBlue[100] : Colors.white,
+                          elevation: 5,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons
+                                    .people, // You can replace this with different icons based on guest type
+                                size: 30,
                                 color: isSelected ? Colors.black : Colors.grey,
                               ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
+                              SizedBox(height: 8),
+                              Text(
+                                guestType,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: isSelected ? Colors.black : Colors.grey,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-
-              SizedBox(height: 20),
-
-              // Continue button
-              ElevatedButton(
-                onPressed: _isContinueEnabled()
-                    ? () {
-                        _saveGuestTypesToDatabase();
-                        Navigator.pushNamed(context,
-                            '/property_location'); // Navigate to the next page
-                      }
-                    : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                  padding: EdgeInsets.symmetric(vertical: 15),
-                  textStyle: TextStyle(fontSize: 16, color: Colors.white),
-                  minimumSize: Size(MediaQuery.of(context).size.width, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0),
+                      );
+                    },
                   ),
                 ),
-                child: Text(
-                  'Continue',
-                  style: TextStyle(color: Colors.white),
+      
+                SizedBox(height: 20),
+      
+                // Continue button
+                ElevatedButton(
+                  onPressed: _isContinueEnabled()
+                      ? () {
+                          _saveGuestTypesToDatabase();
+                          Navigator.pushNamed(context,
+                              '/property_location'); // Navigate to the next page
+                        }
+                      : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    padding: EdgeInsets.symmetric(vertical: 15),
+                    textStyle: TextStyle(fontSize: 16, color: Colors.white),
+                    minimumSize: Size(MediaQuery.of(context).size.width, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                  ),
+                  child: Text(
+                    'Continue',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-      bottomNavigationBar: BottomNavigationButtons(
-        onNext: () {
-          // Check if any guest type is selected
-          if (_isContinueEnabled()) {
-            // Proceed to next page if guest types are selected
-            _saveGuestTypesToDatabase();
-            Navigator.pushNamed(context, '/property_location');
-          } else {
-            // Show alert dialog if no guest types are selected
-            _showAlertDialog(context);
-          }
-        },
+        bottomNavigationBar: BottomNavigationButtons(
+          onNext: () {
+            if ( _isContinueEnabled()) {
+              Navigator.pushNamed(context, '/which_kind_of_place');
+            } else {
+              _showAlertDialog(context);
+            }
+          },
+        ),
       ),
     );
   }

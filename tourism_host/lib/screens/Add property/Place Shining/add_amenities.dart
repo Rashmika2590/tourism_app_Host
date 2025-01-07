@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tourism_host/Reusables/widgets/bottom_nav_buttons.dart';
 
 class SelectAmenitiesPage extends StatefulWidget {
   @override
@@ -63,34 +64,35 @@ class _SelectAmenitiesPageState extends State<SelectAmenitiesPage> {
     return _selectedAmenities.length >= 4;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+ @override
+Widget build(BuildContext context) {
+  return SafeArea(
+    child: Scaffold(
       body: Container(
         color: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Large text sentences
-              SizedBox(height: 35),
-              const Text(
-                "Make your place Shine",
-                textAlign: TextAlign.start,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              Divider(),
-              SizedBox(height: 20),
-              Text(
-                "Select the amenities available in your property",
-                textAlign: TextAlign.start,
-                style: TextStyle(fontSize: 20, color: Colors.blueAccent[700], fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 15),
-              // Property type tiles
-              Expanded(
-                child: ListView(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Large text sentences
+                SizedBox(height: 30),
+                const Text(
+                  "Make your place Shine",
+                  textAlign: TextAlign.start,
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                Divider(),
+                SizedBox(height: 20),
+                Text(
+                  "Select the amenities available in your property",
+                  textAlign: TextAlign.start,
+                  style: TextStyle(fontSize: 20, color: Colors.blueAccent[700], fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 15),
+                // Property type tiles
+                Column(
                   children: _amenities.entries.map((category) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,7 +109,7 @@ class _SelectAmenitiesPageState extends State<SelectAmenitiesPage> {
                           ),
                         ),
                         Divider(),
-                        SizedBox(height: 15,),
+                        SizedBox(height: 15),
                         GridView.builder(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
@@ -158,42 +160,72 @@ class _SelectAmenitiesPageState extends State<SelectAmenitiesPage> {
                             );
                           },
                         ),
-                        SizedBox(height: 35,),
+                        SizedBox(height: 35),
                       ],
                     );
                   }).toList(),
                 ),
-              ),
-              SizedBox(height: 20),
-              // Continue button
-              ElevatedButton(
-                onPressed: _isContinueEnabled()
-                    ? () {
-                        // Handle continue action
-                        Navigator.pushNamed(context, '/name_description');
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Selected Amenities: $_selectedAmenities')),
-                        );
-                      }
-                    : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                  padding: EdgeInsets.symmetric(vertical: 15),
-                  textStyle: TextStyle(fontSize: 16, color: Colors.white), // Text style
-                  minimumSize: Size(MediaQuery.of(context).size.width, 50), // Full-width button
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0),
+                SizedBox(height: 20),
+                // Continue button
+                ElevatedButton(
+                  onPressed: _isContinueEnabled()
+                      ? () {
+                          // Handle continue action
+                          Navigator.pushNamed(context, '/name_description');
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Selected Amenities: $_selectedAmenities')),
+                          );
+                        }
+                      : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    padding: EdgeInsets.symmetric(vertical: 15),
+                    textStyle: TextStyle(fontSize: 16, color: Colors.white), // Text style
+                    minimumSize: Size(MediaQuery.of(context).size.width, 50), // Full-width button
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                  ),
+                  child: Text(
+                    'Continue',
+                    style: TextStyle(color: Colors.white), // Text color explicitly set to white
                   ),
                 ),
-                child: Text(
-                  'Continue',
-                  style: TextStyle(color: Colors.white), // Text color explicitly set to white
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
+      bottomNavigationBar: BottomNavigationButtons(
+          onNext: () {
+            if ( _isContinueEnabled()) {
+              Navigator.pushNamed(context, '/which_kind_of_place');
+            } else {
+              _showAlertDialog(context);
+            }
+          },
+        ),
+    ),
+  );
+}
+
+  void _showAlertDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Warning'),
+          content: Text('Please select at least one guest type before proceeding.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

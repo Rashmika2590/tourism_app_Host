@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tourism_host/Reusables/widgets/bottom_nav_buttons.dart';
 
 class EditPropertyPage extends StatefulWidget {
   final PropertyModel property;
@@ -79,9 +80,9 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
+    return SafeArea(
+      child: Scaffold(
+        body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -206,6 +207,11 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
               ),
             ],
           ),
+        ),
+       bottomNavigationBar: BottomNavigationButtons(
+          onNext: () {
+              Navigator.pushNamed(context, '/which_kind_of_place');
+            }
         ),
       ),
     );
