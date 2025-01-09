@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:tourism_host/screens/Property%20Details/property_details.dart';
 
 class DashboardPage extends StatelessWidget {
-  const DashboardPage({Key? key}) : super(key: key);
+   DashboardPage({Key? key}) : super(key: key);
+
+  // Instance of secure storage
+  final FlutterSecureStorage secureStorage = FlutterSecureStorage();
 
   Widget buildDashboardCard({
     required IconData icon,
@@ -47,6 +51,36 @@ class DashboardPage extends StatelessWidget {
     );
   }
 
+  Future<void> showToken(BuildContext context) async {
+    try {
+      // Retrieve the token from secure storage
+      String? token = await secureStorage.read(key: 'firebase_token');
+      if (token != null) {
+        // Show the token in a SnackBar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Firebase Token: $token'),
+            duration: Duration(seconds: 5),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('No token found in secure storage!'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error retrieving token: $e'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Initialize screen width and height using MediaQuery
@@ -59,7 +93,7 @@ class DashboardPage extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: screenWidth * 0.05, // 5% of screen width for padding
-            vertical: screenHeight * 0.04,  // 4% of screen height for padding
+            vertical: screenHeight * 0.04, // 4% of screen height for padding
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -144,18 +178,19 @@ class DashboardPage extends StatelessWidget {
               ),
 
               ElevatedButton(
-                onPressed: (){
+                onPressed: () {
                   Navigator.pushNamed(context, '/Property_creation_test');
-                }, 
-                child: Text('property creation test')
-                ),
+                },
+                child: Text('property creation test'),
+              ),
               // Notifications button
               ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/notifications');
-                },
-                icon: const Icon(Icons.notifications,color: Colors.white,),
-                label: const Text("Notifications",style: TextStyle(color: Colors.white) ,),
+                onPressed: () => showToken(context),
+                icon: const Icon(Icons.notifications, color: Colors.white),
+                label: const Text(
+                  "Notifications",
+                  style: TextStyle(color: Colors.white),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueAccent,
                   padding: EdgeInsets.symmetric(

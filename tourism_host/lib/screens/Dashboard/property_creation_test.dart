@@ -1,7 +1,8 @@
 import 'dart:convert';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:tourism_host/Utils/shared_preferences.dart';
 
 class PropertyCreationPage extends StatefulWidget {
   const PropertyCreationPage({super.key});
@@ -17,20 +18,16 @@ class _PropertyCreationPageState extends State<PropertyCreationPage> {
   final _cityController = TextEditingController();
   final _countryController = TextEditingController();
 
-  Future<String?> getIdToken() async {
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) {
-        print('No user is currently logged in.');
-        return null;
-      }
-      String? token = await user.getIdToken();
-      print('Firebase ID Token(property): $token');
-      return token;
-    } catch (e) {
-      print('Failed to get ID Token(property): ${e.toString()}');
-      throw Exception('Failed to get ID Token: ${e.toString()}');
-    }
+  final _secureStorage =
+      const FlutterSecureStorage(); // Secure storage instance
+
+  var token;
+
+  @override
+  initState() {
+    token = SharedPreferecesUtil.getToken();
+    print('$token');
+    super.initState();
   }
 
   Future<void> createProperty(BuildContext context) async {
@@ -39,12 +36,16 @@ class _PropertyCreationPageState extends State<PropertyCreationPage> {
     }
 
     try {
-      final token = await getIdToken();
+      // Retrieve token from secure storage
+      final token = await _secureStorage.read(key: 'firebase_token');
       if (token == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to retrieve Firebase token.')),
+          const SnackBar(
+              content: Text('Failed to retrieve authentication token.')),
         );
         return;
+      } else {
+        print('Firebase ID Token (stored): $token');
       }
 
       final propertyData = {
@@ -68,11 +69,16 @@ class _PropertyCreationPageState extends State<PropertyCreationPage> {
         },
         "propertyImage": {
           "primaryImageUrl": "https://example.com/image1.jpg", // Make dynamic
-          "secondaryImageUrl1": "https://example.com/image2.jpg", // Make dynamic
-          "secondaryImageUrl2": "https://example.com/image3.jpg", // Make dynamic
-          "secondaryImageUrl3": "https://example.com/image4.jpg", // Make dynamic
-          "secondaryImageUrl4": "https://example.com/image5.jpg", // Make dynamic
-          "secondaryImageUrl5": "https://example.com/image6.jpg", // Make dynamic
+          "secondaryImageUrl1":
+              "https://example.com/image2.jpg", // Make dynamic
+          "secondaryImageUrl2":
+              "https://example.com/image3.jpg", // Make dynamic
+          "secondaryImageUrl3":
+              "https://example.com/image4.jpg", // Make dynamic
+          "secondaryImageUrl4":
+              "https://example.com/image5.jpg", // Make dynamic
+          "secondaryImageUrl5":
+              "https://example.com/image6.jpg", // Make dynamic
         },
         "guestCapacities": [
           {
@@ -82,15 +88,18 @@ class _PropertyCreationPageState extends State<PropertyCreationPage> {
         ],
       };
 
-      final response = await http.post(
-        Uri.parse(
-            'http://uexplusmobileapi-env.eba-ppaf7hqh.eu-north-1.elasticbeanstalk.com/api/Property'),
-        headers: {
-          'Authorization': 'Bearer $token', // Use the token here
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(propertyData),
-      ).timeout(const Duration(seconds: 30));
+      final response = await http
+          .post(
+            Uri.parse(
+                'http://uexplusmobileapi-env.eba-ppaf7hqh.eu-north-1.elasticbeanstalk.com/api/Property'),
+            headers: {
+              'Authorization':
+                  'Bearer $token', // Use the token from secure storage
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode(propertyData),
+          )
+          .timeout(const Duration(seconds: 30));
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -112,6 +121,25 @@ class _PropertyCreationPageState extends State<PropertyCreationPage> {
       print('Error: $e');
     }
   }
+
+  Future<void> sendRequestToBackend() async {
+    final url = Uri.parse(
+        'http://uexplusmobileapi-env.eba-ppaf7hqh.eu-north-1.elasticbeanstalk.com/api/Property/255a0acb-f2eb-4894-2bce-08dd2a528817');
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+      
+    );
+
+    if (response.statusCode == 200) {
+      print('Request successful: ${response.body}');
+    } else {
+      print('Request failed: ${response.statusCode} - ${response.body}');
+    }
+  }
+
 
   @override
   void dispose() {
@@ -135,8 +163,9 @@ class _PropertyCreationPageState extends State<PropertyCreationPage> {
               TextFormField(
                 controller: _propertyNameController,
                 decoration: const InputDecoration(labelText: 'Property Name'),
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Enter property name' : null,
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Enter property name'
+                    : null,
               ),
               TextFormField(
                 controller: _streetController,
@@ -157,7 +186,7 @@ class _PropertyCreationPageState extends State<PropertyCreationPage> {
                     value == null || value.isEmpty ? 'Enter country' : null,
               ),
               ElevatedButton(
-                onPressed: () => createProperty(context),
+                onPressed: () => sendRequestToBackend(),
                 child: const Text('Create Property'),
               ),
             ],

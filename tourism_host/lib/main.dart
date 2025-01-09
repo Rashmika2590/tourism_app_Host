@@ -1,6 +1,7 @@
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:tourism_host/Utils/shared_preferences.dart';
 import 'package:tourism_host/firebase_options.dart';
 import 'package:tourism_host/screens/Add%20property/Place%20Shining/add_rules.dart';
 import 'package:tourism_host/screens/Add%20property/Property%20Describing/select_gust_types.dart';
@@ -37,6 +38,7 @@ import 'package:tourism_host/screens/registration/registration.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await SharedPreferecesUtil.init();
   runApp(HostApp());
 }
 

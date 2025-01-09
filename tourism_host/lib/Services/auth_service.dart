@@ -1,12 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:tourism_host/Utils/shared_preferences.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FlutterSecureStorage secureStorage = FlutterSecureStorage();
 
   // Register with email and password
-  Future<String?> registerWithEmailAndPassword(String email, String password) async {
+  Future<String?> registerWithEmailAndPassword(
+      String email, String password) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
         email: email,
@@ -14,41 +14,37 @@ class AuthService {
       );
       // Retrieve the ID token
       String? idToken = await result.user?.getIdToken();
+      await SharedPreferecesUtil.setToken(idToken!);
       print('Firebase ID Token (Registration): $idToken');
       return idToken; // Return the token
     } catch (e) {
       throw Exception('Registration failed: ${e.toString()}');
     }
   }
-  Future<void> saveToken(String token) async {
-  try {
-    await secureStorage.write(key: 'firebase_token', value: token);
-    print('Token saved securely.');
-  } catch (e) {
-    print('Error saving token: $e');
-  }
-}
-
 
   // Login with email and password
   Future<User?> loginWithEmailAndPassword(String email, String password) async {
-  try {
-    UserCredential result = await _auth.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
-    String? idToken = await result.user?.getIdToken();
-    if (idToken != null) {
-      await saveToken(idToken);
+    try {
+      UserCredential result = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      User? user = result.user;
+
+      if (user != null) {
+        // Retrieve Firebase token
+        String? token = await user.getIdToken();
+        await SharedPreferecesUtil.setToken(token!);
+
+        // You can pass the token to your backend or store it securely
+        return user;
+      }
+      return null; // Return null if user is null
+    } catch (e) {
+      print('Error in signInWithEmailPassword: $e');
+      return null; // Return null on error
     }
-    print('Firebase ID Token (Login): $idToken');
-    return result.user; // Ensure this returns a User object
-  } catch (e) {
-    throw Exception('Login failed: ${e.toString()}');
   }
-}
-
-
 
 //  Future<String?> getIdToken() async {
 //   try {
@@ -65,8 +61,6 @@ class AuthService {
 //     throw Exception('Failed to get ID Token: ${e.toString()}');
 //   }
 // }
-
-
 
   // Logout
   Future<void> logout() async {
